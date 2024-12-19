@@ -1,0 +1,18 @@
+body {
+	background-color: cornsilk;
+	font-family: verdana,sans-serif;
+}
+#cards {
+	display: flex;
+	flex-wrap: wrap;
+	background-color: white;
+	padding: 20px;
+	margin: 20px;
+	background-color: darkseagreen;
+}
+.card {
+	background-color: honeydew;
+	width:200px;
+	padding: 20px;
+	margin: 20px;
+}

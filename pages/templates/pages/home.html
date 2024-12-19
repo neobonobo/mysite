@@ -1,0 +1,21 @@
+{% extends "pages/_base.html" %}
+{% load static %}
+{% block content %}
+{% block style %}
+{% endblock style %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+<div id="cards">
+	<div class="card">
+		<h3>Tahin</h3>
+		<p>Atalık Gökova Susamı</p>
+	</div>
+	<div class="card">
+		<h3>Bal</h3>
+		<p>Şeker verilmemiş</p>
+	</div>
+	<div class="card">
+		<h3>Portakal</h3>
+		<p>Sıfır Kimyasal</p>
+	</div>
+</div>
+{% endblock content %}
