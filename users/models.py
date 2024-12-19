@@ -8,7 +8,7 @@ class CustomUser(AbstractUser):
     pass
 
     def __str__(self):
-        return self.email
+        return self.email if self.email else self.username
 
 class UserProfile(models.Model):  # new
     user = models.OneToOneField(
@@ -25,6 +25,9 @@ class UserProfile(models.Model):  # new
         verbose_name = "User Profile"
         verbose_name_plural = "User Profiles"
 
-@receiver(post_save, sender=CustomUser)  # new
+@receiver(post_save, sender=CustomUser)
 def create_or_update_user_profile(sender, instance, created, **kwargs):
-    UserProfile.objects.get_or_create(user=instance)
+    if created:
+        UserProfile.objects.get_or_create(user=instance)
+    else:
+        instance.userprofile.save()

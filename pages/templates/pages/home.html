@@ -5,17 +5,49 @@
 {% endblock style %}
 <link rel="stylesheet" href="{% static 'css/home.css' %}">
 <div id="cards">
+
+    <!-- Conditional Card -->
+    {% if user.is_authenticated %}
+    <div class="card">
+        <h3>Hello, {{ user.username }}!</h3>
+        <p>Welcome back! Explore our latest products below.</p>
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+        </form>
+    </div>
 	<div class="card">
-		<h3>Tahin</h3>
-		<p>Atalık Gökova Susamı</p>
+		<h3>+ New Order</h3>
+		<p>Your orders:</p>
+        {% for order in orders %}
+			<p> {{ order.status }} | {{ order.created_at|date }} </p>
+
+        {% endfor %}
 	</div>
-	<div class="card">
-		<h3>Bal</h3>
-		<p>Şeker verilmemiş</p>
-	</div>
-	<div class="card">
-		<h3>Portakal</h3>
-		<p>Sıfır Kimyasal</p>
-	</div>
+    {% else %}
+    <div class="card">
+        <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            <h3>Login</h3>
+            <div>
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+    {% endif %}
+
+    <!-- Product Cards -->
+    {% for product in products %}
+    <div class="card">
+        <h3>{{ product.name }}</h3>
+        <p>{{ product.description }}</p>
+    </div>
+    {% endfor %}
 </div>
 {% endblock content %}

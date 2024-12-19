@@ -16,3 +16,27 @@ body {
 	padding: 20px;
 	margin: 20px;
 }
+.card form div {
+    margin-bottom: 15px;
+}
+
+.card form input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.card form button {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.card form button:hover {
+    background-color: #0056b3;
+}
