@@ -52,3 +52,11 @@ body {
 img {
 	width:200px;
 }
+/* Media query for mobile devices */
+@media (max-width: 768px) {
+    img {
+        width: 100%; /* Make the image width span 100% of its container */
+        max-height: 300px; /* Optional: limit the height for very tall images */
+        object-fit: cover; /* Ensures the image fits nicely if height is restricted */
+    }
+}
