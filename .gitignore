@@ -8,4 +8,5 @@ __pycache__/
 # Django
 *.log
 media/
+media/*
 config/settings.py
