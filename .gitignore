@@ -9,4 +9,5 @@ __pycache__/
 *.log
 media/
 media/*
+!media/.keep
 config/settings.py
