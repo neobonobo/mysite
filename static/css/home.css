@@ -2,6 +2,15 @@ body {
 	background-color: cornsilk;
 	font-family: verdana,sans-serif;
 }
+#header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background-color: darkseagreen;
+	padding: 20px;
+	margin: 20px;
+	text-align: center;
+}	
 #cards {
 	display: flex;
 	flex-wrap: wrap;
@@ -39,4 +48,7 @@ body {
 
 .card form button:hover {
     background-color: #0056b3;
+}
+img {
+	width:200px;
 }

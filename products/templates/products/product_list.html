@@ -1,0 +1,20 @@
+{% extends "pages/_base.html" %}
+{% load static %}
+{% block content %}
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock style %}
+<div id="cards">
+ <!-- Product Cards -->
+    {% for product in products %}
+    <div class="card">
+        <h3>{{ product.name }}</h3>
+        <p>{{ product.description|linebreaks }}</p>
+        {% if product.image %}
+           <img src="{{ product.image.url }}" alt="{{ product.name }}">
+        {% endif %}
+		<p>{{ product.price|floatformat:0 }} <span>&#8378;</span> \ {{ product.unit }}</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock content %}

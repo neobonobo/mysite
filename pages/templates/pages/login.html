@@ -4,22 +4,7 @@
 {% block style %}
 <link rel="stylesheet" href="{% static 'css/home.css' %}">
 {% endblock style %}
-<!-- Conditional -->
-{% if user.is_authenticated %}
 <div id="cards">
-    <div class="card">
-        <h3>Hello, {{ user.username }}!</h3>
-        <p>Welcome back! Explore our latest products below.</p>
-        <form method="post" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button type="submit">Logout</button>
-        </form>
-    </div>
- 
-</div>
-{% else %}
-<div id="cards">
-  <div class="card">
 <form method="post" action="{% url 'login' %}">
             {% csrf_token %}
             <h3>Login</h3>
@@ -34,6 +19,4 @@
             <button type="submit">Login</button>
 </form>
 </div>
-</div>
-    {% endif %}
 {% endblock content %}

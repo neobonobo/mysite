@@ -1,0 +1,31 @@
+{% extends "pages/_base.html" %}
+{% block content %}
+<h1>Create Your Order</h1>
+<form method="post">
+    {% csrf_token %}
+    <table>
+        <tr>
+            <th>Product</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Quantity</th>
+        </tr>
+        {% for product in products %}
+        <tr>
+            <td>
+                <label>
+                    <input type="checkbox" name="products" value="{{ product.id }}">
+                    {{ product.name }}
+                </label>
+            </td>
+            <td>{{ product.description }}</td>
+            <td>{{ product.price }}</td>
+            <td>
+                <input type="number" name="quantity" min="1" value="1">
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <button type="submit">Create Order</button>
+</form>
+{% endblock %}
