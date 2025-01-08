@@ -1,39 +1,107 @@
 {% extends "pages/_base.html" %}
 {% load static %}
-{% block content %}
 {% block style %}
 <link rel="stylesheet" href="{% static 'css/home.css' %}">
 {% endblock style %}
-<!-- Conditional -->
-{% if user.is_authenticated %}
+{% block content %}
+
 <div id="cards">
+    <!-- Welcome Card -->
+    {% if user.is_authenticated %}
     <div class="card">
-        <h3>Hello, {{ user.username }}!</h3>
-        <p>Welcome back! Explore our latest products below.</p>
-        <form method="post" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button type="submit">Logout</button>
-        </form>
-    </div>
- 
-</div>
-{% else %}
-<div id="cards">
-  <div class="card">
-<form method="post" action="{% url 'login' %}">
-            {% csrf_token %}
-            <h3>Login</h3>
-            <div>
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="username" required>
-            </div>
-            <div>
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <button type="submit">Login</button>
-</form>
-</div>
-</div>
+		<h3> {{ user.username }} {{ user.userprofile.title }} </h3>
+		<a href="{% url 'products:order_list' %}">
+        	<h3>Your Orders</h3>
+		</a>
+	    Products	
+    {% if products %}
+            {% for product in products %}
+			<img src="{{ product.image.url }}" alt="{{product.name}}"style="width:30px;height:auto;" > {% endfor %}
+    {% else %}
+        <p>No products available.</p>
     {% endif %}
+	<a href="{% url 'products:create_order' %}">+ New Order</a>
+    {% endif %}
+    </div>
+
+    <!-- Todos Cards -->
+    {% if today_todos %}
+    <div class="card">
+        <h3>Today's Todos</h3>
+        <ul>
+            {% for todo in today_todos %}
+            <li>
+                <strong>{{ todo.title }}</strong>
+                {% if todo.is_completed %}
+                <span style="color: green;">Completed</span>
+                {% else %}
+                <form method="post" action="{% url 'toggle_todo_status' todo.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" style="color: red; border: none; background: none;">Pending</button>
+                </form>
+                {% endif %}
+                <br><small>Due: {{ todo.due_date|date:"F j, Y" }}</small>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    {% if tomorrow_todos %}
+    <div class="card">
+        <h3>Tomorrow's Todos</h3>
+        <ul>
+            {% for todo in tomorrow_todos %}
+            <li>
+                <strong>{{ todo.title }}</strong>
+                {% if todo.is_completed %}
+                <span style="color: green;">Completed</span>
+                {% else %}
+                <form method="post" action="{% url 'toggle_todo_status' todo.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" style="color: red; border: none; background: none;">Pending</button>
+                </form>
+                {% endif %}
+                <br><small>Due: {{ todo.due_date|date:"F j, Y" }}</small>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    {% if other_todos %}
+    <div class="card">
+        <h3>Other Todos</h3>
+        <ul>
+            {% for todo in other_todos %}
+            <li>
+                <strong>{{ todo.title }}</strong>
+                {% if todo.is_completed %}
+                <span style="color: green;">Completed</span>
+                {% else %}
+                <form method="post" action="{% url 'toggle_todo_status' todo.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" style="color: red; border: none; background: none;">Pending</button>
+                </form>
+                {% endif %}
+                <br><small>Due: {{ todo.due_date|date:"F j, Y" }}</small>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <!-- Important Dates Card -->
+    {% if dates %}
+    <div class="card">
+        <h3>Important Dates</h3>
+        <ul>
+            {% for date in dates %}
+            <li>{{ date.name }} - {{ date.time_since }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+</div>
+
 {% endblock content %}

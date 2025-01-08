@@ -1,0 +1,23 @@
+{% extends "pages/_base.html" %}
+{% load static %}
+{% block content %}
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock style %}
+<div id="cards">
+ <!-- Product Cards -->
+    {% for order in orders %}
+    <div class="card">
+		<p>{{ order.created_at | date }}</p>
+		<p>Status: {{ order.status }}</p>
+		<ul>
+			{% for item in order.items.all %}
+			<li>{{item.quantity}} x {{item.product.name}}</li>
+			{% endfor %}
+		</ul>
+	</div>
+{% endfor %}
+</div>
+{% endblock content %}
+		
+

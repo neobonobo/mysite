@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ date.name }}</title>
+</head>
+<body>
+    <h1>{{ date.name }}</h1>
+    <p><strong>Date:</strong> {{ date.date }}</p>
+    <p><strong>Description:</strong> {{ date.description|default:"No description available" }}</p>
+    <p><strong>Time Since:</strong> {{ date.time_since }}</p>
+    <a href="{% url 'important_date_list' %}">Back to List</a>
+</body>
+</html>

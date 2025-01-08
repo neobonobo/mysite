@@ -18,12 +18,15 @@ class Product(models.Model):
 class Order(models.Model):
     STATUS_CHOICES = (
         ('Ordered', 'Ordered'),
+        ('Waiting', 'Waiting'),
         ('Delivered', 'Delivered'),
+        ('Received', 'Received'),
         ('Settled', 'Settled'),
     )
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="orders")
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="Ordered")
     created_at = models.DateTimeField(auto_now_add=True)
+    details = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f"Order #{self.id} by {self.user.username} - {self.status}"

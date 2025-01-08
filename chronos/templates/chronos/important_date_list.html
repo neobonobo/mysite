@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Important Dates</title>
+</head>
+<body>
+    <h1>Important Dates</h1>
+    <ul>
+        {% for date in dates %}
+            <li>
+                <strong>{{ date.name }}</strong> 
+                ({{ date.date }}): 
+                <em>{{ date.time_since }}</em>
+                - <a href="{% url 'important_date_detail' date.pk %}">Details</a>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

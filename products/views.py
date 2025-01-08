@@ -31,6 +31,9 @@ def order_summary(request, order_id):
     order = Order.objects.get(id=order_id, user=request.user)
     return render(request, 'orders/order_summary.html', {'order': order})
 
+def order_list(request):
+    orders = Order.objects.filter(user=request.user)
+    return render(request, 'products/order_list.html', {'orders': orders})
 def products(request):
     products = Product.objects.all()
     return render(request, 'products/product_list.html', {'products': products})

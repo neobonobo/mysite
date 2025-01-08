@@ -2,6 +2,10 @@ body {
 	background-color: cornsilk;
 	font-family: verdana,sans-serif;
 }
+a {
+	text-decoration: none;
+	color: black;
+}
 #header {
 	display: flex;
 	align-items: center;
@@ -10,7 +14,7 @@ body {
 	padding: 20px;
 	margin: 20px;
 	text-align: center;
-}	
+}
 #cards {
 	display: flex;
 	flex-wrap: wrap;
@@ -20,15 +24,48 @@ body {
 	background-color: darkseagreen;
 }
 .card {
-	background-color: honeydew;
-	width:200px;
+	border: 1px solid #ccc;
+	border-radius: 8px;
 	padding: 20px;
-	margin: 20px;
+	background-color: honeydew;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+	width:200px;
+	margin: 10px ;
+	overflow: hidden; /* Prevent content from overflowing */
 }
 .card form div {
     margin-bottom: 15px;
 }
 
+.card ul {
+    max-height: 150px; /* Set a maximum height for the list */
+    overflow-y: auto; /* Add vertical scrolling if content overflows */
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.card ul li {
+    margin: 5px 0;
+    padding: 5px 0;
+    border-bottom: 1px solid #eee; /* Optional: Separate items visually */
+}
+
+.card ul li:last-child {
+    border-bottom: none; /* Remove the border for the last item */
+}
+.card ul::-webkit-scrollbar {
+    width: 8px;
+}
+
+.card ul::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 4px;
+}
+
+.card ul::-webkit-scrollbar-thumb:hover {
+    background-color: #aaa;
+}
 .card form input {
     width: 100%;
     padding: 8px;

@@ -1,6 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import redirect,render,get_object_or_404
+from django.contrib.auth.decorators import login_required
+from datetime import date, timedelta
 from django.views.generic import TemplateView
 from products.models import Product, Order  # Import Product and Order models
+from chronos.models import ImportantDate,Todo
 
 class HomePageView(TemplateView):
     template_name = 'pages/home.html'
@@ -12,4 +15,34 @@ class HomePageView(TemplateView):
             context['orders'] = Order.objects.filter(user=self.request.user)  # Filter orders for logged-in user
         else:
             context['orders'] = None  # No orders for anonymous users
+        if self.request.user.is_authenticated:  # Check if the user is logged in
+            context['dates'] = ImportantDate.objects.all().order_by('-date')
+        else:
+            context['dates'] = None
+        if self.request.user.is_authenticated:  # Check if the user is logged in
+            context['todos'] = Todo.objects.all().order_by('-created_at')
+        else:
+            context['todos'] = None
+
+# Handle todos grouping
+        if self.request.user.is_authenticated:
+            today = date.today()
+            tomorrow = today + timedelta(days=1)
+
+            # Separate todos based on their due date
+            context['today_todos'] = Todo.objects.filter(user=self.request.user, due_date=today).order_by('-created_at')
+            context['tomorrow_todos'] = Todo.objects.filter(user=self.request.user, due_date=tomorrow).order_by('-created_at')
+            context['other_todos'] = Todo.objects.filter(
+                user=self.request.user
+            ).exclude(due_date__in=[today, tomorrow]).order_by('-created_at')
+        else:
+            context['today_todos'] = None
+            context['tomorrow_todos'] = None
+            context['other_todos'] = None
         return context
+@login_required
+def toggle_todo_status(request, pk):
+    todo = get_object_or_404(Todo, pk=pk, user=request.user)
+    todo.is_completed = not todo.is_completed
+    todo.save()
+    return redirect('home')  # Redirect to home page

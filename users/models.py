@@ -17,6 +17,8 @@ class UserProfile(models.Model):  # new
     )
     # add additional fields for UserProfile
     birthday = models.DateField(blank=True, null=True, help_text="User's birthday")
+    last_smoking = models.DateField(blank=True, null=True, help_text="Date of last smoking")
+    title = models.CharField(max_length=255, blank=True, null=True, help_text="User's title")
 
     def __str__(self):
         return f"Profile for {self.user.email}"
