@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="{% static 'css/home.css' %}">
 {% endblock style %}
 <div id="cards">
-<form method="post" action="{% url 'login' %}">
+<form method="post" action="{% url 'pages:login' %}">
             {% csrf_token %}
             <h3>Login</h3>
             <div>

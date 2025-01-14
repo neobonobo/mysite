@@ -7,6 +7,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('products/', include('products.urls')),
     path('chronos/', include('chronos.urls')),
-    path("", include("pages.urls")),
+    path("", include("pages.urls",namespace='pages')),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

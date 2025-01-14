@@ -1,9 +1,46 @@
 from django.shortcuts import redirect,render,get_object_or_404
+from django.template.loader import get_template
+from django.template import TemplateDoesNotExist
 from django.contrib.auth.decorators import login_required
 from datetime import date, timedelta
 from django.views.generic import TemplateView
 from products.models import Product, Order  # Import Product and Order models
 from chronos.models import ImportantDate,Todo
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect
+from products.models import Product
+from products.models import Order, OrderItem
+from economy.models import Expense, ExpenseCategory
+
+@login_required
+def user_homepage(request, username):
+    if request.user.username.lower() != username.lower():
+        return redirect(f"/{request.user.username}/")
+    # Handle form submission for a new order
+    if request.method == "POST":
+        product_id = request.POST.get("product")
+        quantity = request.POST.get("quantity")
+        if product_id and quantity:
+            product = Product.objects.get(id=product_id)
+            order = Order.objects.create(user=request.user, status="Ordered", details="New order created")
+            OrderItem.objects.create(order=order, product=product, quantity=quantity)
+            return redirect(f"/{username}/")
+
+    # Fetch available products and user's past orders
+    products = Product.objects.all()
+    expenses = Expense.objects.filter(user=request.user)
+    orders = Order.objects.filter(user=request.user).order_by("-created_at")
+    return render(request, f"pages/{username.lower()}.html", {
+        "username": username,
+        "products": products,
+        "orders": orders,
+        "expenses":expenses
+    })
+def custom_redirect_view(request):
+    if request.user.is_authenticated:
+        return redirect(f'/{request.user.username}/')
+    return redirect('login')
 
 class HomePageView(TemplateView):
     template_name = 'pages/home.html'

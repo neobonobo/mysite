@@ -11,7 +11,6 @@ class OrderForm(forms.Form):
         label="Select Products"
     )
 
-
 class OrderItemForm(forms.ModelForm):
     class Meta:
         model = OrderItem

@@ -1,0 +1,15 @@
+{% extends "pages/_base.html" %}
+{% load static %}
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock style %}
+{% block content %}
+
+<div id="cards">
+    <!-- Welcome Card -->
+    {% if user.is_authenticated %}
+	Hello {{ user.username }} {{ user.userprofile.title }}
+	{% endif %}
+
+</div>
+{% endblock content %}
