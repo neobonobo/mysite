@@ -17,6 +17,10 @@ from economy.models import Expense, ExpenseCategory
 def user_homepage(request, username):
     if request.user.username.lower() != username.lower():
         return redirect(f"/{request.user.username}/")
+    # Restrict access to diablo's page
+    if username.lower() == "diablo" and request.user.username.lower() != "diablo":
+        return redirect(f"/{request.user.username}/")  # Redirect unauthorized users
+
     # Handle form submission for a new order
     if request.method == "POST":
         product_id = request.POST.get("product")
