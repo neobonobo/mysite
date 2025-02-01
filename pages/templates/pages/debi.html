@@ -7,10 +7,12 @@
 
 {% block content %}
 <div id="cards">
-
     <!-- Welcome Card -->
     <div class="card">
-		<p>Hi  {{user.username}} {{ user.userprofile.title }}</p>
+		<p>Hi  {{user.username}} 
+		{% if user.userprofile.title %}
+		{{ user.userprofile.title }}
+		{% endif %}</p>
         <p>Listening your orders</p>
             <form method="POST" action="">
                 {% csrf_token %}
