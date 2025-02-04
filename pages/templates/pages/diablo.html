@@ -1,0 +1,42 @@
+{% extends "pages/_base.html" %}
+{% load static %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock style %}
+
+{% block content %}
+<div id="cards">
+    <!-- Welcome Card -->
+    <div class="card">
+		 {{user.username}} 
+		{% if user.userprofile.title %}
+		{{ user.userprofile.title }}
+		{% endif %}</p>
+            <form method="POST" action="">
+                {% csrf_token %}
+                <textarea name="order_text" placeholder="Enter your words here please..." rows="2" required></textarea>
+				<button type="submit">Send</button>
+			</form>
+	</div>
+    <div class="card">
+		debi's todos:
+		{% for todo in todos %}
+		{% if todo.user.username == "debi" %}
+		<p>{{ todo.title }}</p>
+		{% endif %}
+		{% endfor %}
+	</div>
+	<div class="card">
+        <h3>Your Messages:</h3>
+        {% for message in messages %}
+            <p><strong>{{ message.sender.username }}:</strong> {{ message.text }} <br>
+            <small>{{ message.created_at }}</small></p>
+            <hr>
+        {% empty %}
+            <p>No messages yet.</p>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock content %}

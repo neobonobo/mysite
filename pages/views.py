@@ -12,6 +12,8 @@ from django.shortcuts import redirect
 from products.models import Product
 from products.models import Order, OrderItem
 from economy.models import Expense, ExpenseCategory
+from .models import Message
+from users.models import CustomUser as User
 
 @login_required
 def user_homepage(request, username):
@@ -31,15 +33,29 @@ def user_homepage(request, username):
             OrderItem.objects.create(order=order, product=product, quantity=quantity)
             return redirect(f"/{username}/")
 
+# Only Diablo can send messages
+    if request.method == "POST" and request.user.username.lower() == "diablo":
+        order_text = request.POST.get("order_text")
+        if order_text:
+            admin_user = User.objects.filter(is_superuser=True).first()  # Send to the first admin
+            if admin_user:
+                Message.objects.create(sender=request.user, receiver=admin_user, text=order_text)
+
+    # Get messages for this user
+    messages = Message.objects.filter(receiver=request.user).order_by("-created_at")
     # Fetch available products and user's past orders
     products = Product.objects.all()
     expenses = Expense.objects.filter(user=request.user)
     orders = Order.objects.filter(user=request.user).order_by("-created_at")
+    messages = Message.objects.filter(receiver=request.user).order_by("-created_at")
+    todos = Todo.objects.all()
     return render(request, f"pages/{username.lower()}.html", {
         "username": username,
         "products": products,
         "orders": orders,
         "expenses":expenses
+        ,"messages":messages
+        ,"todos":todos
     })
 def custom_redirect_view(request):
     if request.user.is_authenticated:
