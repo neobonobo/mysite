@@ -13,6 +13,7 @@ from django.shortcuts import redirect
 from products.models import Product
 from products.models import Order, OrderItem
 from economy.models import Expense, ExpenseCategory
+from django.contrib.auth.views import LoginView
 from .models import Message
 from users.models import CustomUser as User
 
@@ -125,4 +126,4 @@ def log_smoke(request):
         SmokeLog.objects.create(user=request.user, timestamp=now())
         return JsonResponse({"status": "success", "message": "Smoke logged!", "timestamp": now().strftime("%Y-%m-%d %H:%M:%S")})
     return JsonResponse({"status": "error", "message": "Not allowed!"})
-   return JsonResponse({"status": "error", "message": "Invalid data."})
+    return JsonResponse({"status": "error", "message": "Invalid data."})
