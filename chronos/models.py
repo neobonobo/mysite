@@ -2,6 +2,12 @@ from django.db import models
 from django.utils.timezone import now
 from django.conf import settings
 
+class SmokeLog(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} smoked at {self.timestamp}"
 class ImportantDate(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="important_dates")
     name = models.CharField(max_length=255, help_text="Name of the event, e.g., 'Stopped Smoking'")

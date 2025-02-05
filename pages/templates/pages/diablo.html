@@ -3,40 +3,112 @@
 
 {% block style %}
 <link rel="stylesheet" href="{% static 'css/home.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 {% endblock style %}
 
 {% block content %}
+<button id="smokeButton">Smoked</button>
+<ul id="smokeLog"></ul>
 <div id="cards">
-    <!-- Welcome Card -->
-    <div class="card">
-		 {{user.username}} 
-		{% if user.userprofile.title %}
-		{{ user.userprofile.title }}
-		{% endif %}</p>
-            <form method="POST" action="">
-                {% csrf_token %}
-                <textarea name="order_text" placeholder="Enter your words here please..." rows="2" required></textarea>
-				<button type="submit">Send</button>
-			</form>
-	</div>
-    <div class="card">
-		debi's todos:
-		{% for todo in todos %}
-		{% if todo.user.username == "debi" %}
-		<p>{{ todo.title }}</p>
-		{% endif %}
-		{% endfor %}
-	</div>
 	<div class="card">
+Dear	 {{user.username}} 
         <h3>Your Messages:</h3>
         {% for message in messages %}
             <p><strong>{{ message.sender.username }}:</strong> {{ message.text }} <br>
-            <small>{{ message.created_at }}</small></p>
             <hr>
         {% empty %}
             <p>No messages yet.</p>
         {% endfor %}
+		<form id="messageForm">
+    		{% csrf_token %}
+    		<textarea id="order_text" name="order_text" placeholder="Enter your message..." rows="2" required></textarea>
+    		<button type="submit">Send</button>
+		</form>
+		<div id="messageStatus"></div>
     </div>
+    <div class="card">
+		debi's todos:
+		{% for todo in todos %}
+    	<div class="todo-item">
+        {% if todo.is_completed %}
+		<p>{{ todo.title }}</p>
+            <i class="fa fa-check-circle text-green-500"></i>  <!-- Green checked -->
+        {% else %}
+		<p>{{ todo.title }}</p>
+            <i class="fa fa-times-circle text-red-500"></i>  <!-- Red cross -->
+        {% endif %}
+        <span>{{ todo.text }}</span>
+		{% endfor %}
+    </div>
+	<h3>Smoking History:</h3>
+<ul>
+    {% for log in request.user.smokelog_set.all %}
+        <li>Smoked at {{ log.timestamp }}</li>
+    {% empty %}
+        <li>No smoking events logged.</li>
+    {% endfor %}
+</ul>
 </div>
+<script>
+	document.getElementById("messageForm").addEventListener("submit", function(event) {
+    event.preventDefault();  // Prevent full page reload
 
+    let formData = new FormData(this);
+    let csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    // Hardcode the receiver as "debi"
+    formData.append("receiver", "debi");
+
+    fetch("{% url 'pages:send_message' %}", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": csrfToken
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("Response received:", data);  // Debugging
+
+        if (data.status === "success") {
+            let messageList = document.getElementById("messagesList");
+
+            if (!messageList) {
+                console.error("Error: #messagesList not found in the DOM!");
+                return;
+            }
+
+            let newMessage = document.createElement("p");
+            newMessage.innerHTML = `<strong>{{ user.username }}:</strong> ${data.message_text} <br><hr>`;
+
+            messageList.prepend(newMessage);  // Add new message at the top
+            document.getElementById("order_text").value = "";  // Clear input field
+        } else {
+            console.error("Error in response:", data.message);
+        }
+    })
+    .catch(error => console.error("Fetch error:", error));
+});
+	document.getElementById("smokeButton").addEventListener("click", function() {
+    fetch("{% url 'pages:log_smoke' %}", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": "{{ csrf_token }}",
+            "Content-Type": "application/json"
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "success") {
+            let logList = document.getElementById("smokeLog");
+            let newEntry = document.createElement("li");
+            newEntry.innerText = `Smoked at: ${data.timestamp}`;
+            logList.prepend(newEntry);
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(error => console.error("Error:", error));
+});
+</script>
 {% endblock content %}

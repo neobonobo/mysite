@@ -1,11 +1,12 @@
 from django.shortcuts import redirect,render,get_object_or_404
+from django.http import JsonResponse
 from django.template.loader import get_template
 from django.template import TemplateDoesNotExist
 from django.contrib.auth.decorators import login_required
 from datetime import date, timedelta
 from django.views.generic import TemplateView
 from products.models import Product, Order  # Import Product and Order models
-from chronos.models import ImportantDate,Todo
+from chronos.models import ImportantDate,Todo,SmokeLog
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
@@ -15,47 +16,49 @@ from economy.models import Expense, ExpenseCategory
 from .models import Message
 from users.models import CustomUser as User
 
+# General Homepage (Login Page for Everyone)
+def homepage(request):
+    if request.user.is_authenticated:
+        return redirect(f'/{request.user.username}/')  # Redirect logged-in users
+    return render(request, "pages/login.html")  # Show login page for everyone else
+
+# Custom Login View (Redirects to User-Specific Page)
+class CustomLoginView(LoginView):
+    template_name = "pages/login.html"  # Use your login template
+
+    def get_success_url(self):
+        return reverse("user_homepage", kwargs={"username": self.request.user.username})  # Redirect after login
+
+# Special View for Each User
+@login_required
+def user_homepage(request, username):
+    if request.user.username.lower() != username.lower():
+        return redirect(f"/{request.user.username}/")  # Redirect to correct user
+
+    template_name = f"pages/{username.lower()}.html"  # User-specific template
+    return render(request, template_name, {"username": username})
+
 @login_required
 def user_homepage(request, username):
     if request.user.username.lower() != username.lower():
         return redirect(f"/{request.user.username}/")
-    # Restrict access to diablo's page
-    if username.lower() == "diablo" and request.user.username.lower() != "diablo":
-        return redirect(f"/{request.user.username}/")  # Redirect unauthorized users
-
-    # Handle form submission for a new order
-    if request.method == "POST":
-        product_id = request.POST.get("product")
-        quantity = request.POST.get("quantity")
-        if product_id and quantity:
-            product = Product.objects.get(id=product_id)
-            order = Order.objects.create(user=request.user, status="Ordered", details="New order created")
-            OrderItem.objects.create(order=order, product=product, quantity=quantity)
-            return redirect(f"/{username}/")
-
-# Only Diablo can send messages
-    if request.method == "POST" and request.user.username.lower() == "diablo":
-        order_text = request.POST.get("order_text")
-        if order_text:
-            admin_user = User.objects.filter(is_superuser=True).first()  # Send to the first admin
-            if admin_user:
-                Message.objects.create(sender=request.user, receiver=admin_user, text=order_text)
-
     # Get messages for this user
     messages = Message.objects.filter(receiver=request.user).order_by("-created_at")
     # Fetch available products and user's past orders
     products = Product.objects.all()
     expenses = Expense.objects.filter(user=request.user)
     orders = Order.objects.filter(user=request.user).order_by("-created_at")
-    messages = Message.objects.filter(receiver=request.user).order_by("-created_at")
+    messages = Message.objects.all().order_by("-created_at")
     todos = Todo.objects.all()
+    users = User.objects.all()
     return render(request, f"pages/{username.lower()}.html", {
         "username": username,
         "products": products,
         "orders": orders,
-        "expenses":expenses
-        ,"messages":messages
-        ,"todos":todos
+        "expenses":expenses,
+        "messages":messages,
+        "todos":todos,
+        "users":users
     })
 def custom_redirect_view(request):
     if request.user.is_authenticated:
@@ -103,3 +106,23 @@ def toggle_todo_status(request, pk):
     todo.is_completed = not todo.is_completed
     todo.save()
     return redirect('home')  # Redirect to home page
+@login_required
+def send_message(request):
+    if request.method == "POST":
+        order_text = request.POST.get("order_text")
+        if order_text:
+            receiver = User.objects.filter(username="debi").first()
+            if receiver:
+                message = Message.objects.create(sender=request.user, receiver=receiver, text=order_text)
+                return JsonResponse({
+                    "status": "success",
+                    "message_text": message.text  # Return the message text for display
+                })
+
+@login_required
+def log_smoke(request):
+    if request.user.username.lower() == "diablo":
+        SmokeLog.objects.create(user=request.user, timestamp=now())
+        return JsonResponse({"status": "success", "message": "Smoke logged!", "timestamp": now().strftime("%Y-%m-%d %H:%M:%S")})
+    return JsonResponse({"status": "error", "message": "Not allowed!"})
+   return JsonResponse({"status": "error", "message": "Invalid data."})
