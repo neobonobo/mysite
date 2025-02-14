@@ -6,6 +6,12 @@
 {% endblock style %}
 
 {% block content %}
+        {% for message in messages %}
+            <p><strong>{{ message.sender.username }}:</strong> {{ message.text }} <br>
+            <hr>
+        {% empty %}
+            <p>No messages yet.</p>
+        {% endfor %}
 <div id="cards">
     <!-- Welcome Card -->
     <div class="card">
@@ -23,7 +29,6 @@
 	</div>
 </div>
 {% for expense in expenses %}
-
 <p>{{ expense.date }} - {{ expense.description }} - {{ expense.amount }}</p>
 {% endfor %}
 

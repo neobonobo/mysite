@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from datetime import date, timedelta
 from django.views.generic import TemplateView
 from products.models import Product, Order  # Import Product and Order models
-from chronos.models import ImportantDate,Todo,SmokeLog
+from chronos.models import ImportantDate,Todo
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
@@ -120,10 +120,3 @@ def send_message(request):
                     "message_text": message.text  # Return the message text for display
                 })
 
-@login_required
-def log_smoke(request):
-    if request.user.username.lower() == "diablo":
-        SmokeLog.objects.create(user=request.user, timestamp=now())
-        return JsonResponse({"status": "success", "message": "Smoke logged!", "timestamp": now().strftime("%Y-%m-%d %H:%M:%S")})
-    return JsonResponse({"status": "error", "message": "Not allowed!"})
-    return JsonResponse({"status": "error", "message": "Invalid data."})
