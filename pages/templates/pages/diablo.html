@@ -38,14 +38,6 @@ Dear	 {{user.username}}
         <span>{{ todo.text }}</span>
 		{% endfor %}
     </div>
-	<h3>Smoking History:</h3>
-<ul>
-    {% for log in request.user.smokelog_set.all %}
-        <li>Smoked at {{ log.timestamp }}</li>
-    {% empty %}
-        <li>No smoking events logged.</li>
-    {% endfor %}
-</ul>
 </div>
 <script>
 	document.getElementById("messageForm").addEventListener("submit", function(event) {
