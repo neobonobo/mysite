@@ -11,4 +11,5 @@ media/
 media/*
 !media/.keep
 config/settings.py
+pages/templates/pages/*
 
